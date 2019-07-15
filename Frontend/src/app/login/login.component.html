@@ -1,0 +1,19 @@
+<div style="text-align: center">
+  <div class="mat-headline" fxLayoutAlign="center center" style="padding: 16px 0 24px; font-size: 22px">Login to your
+    account</div>
+
+  <mat-form-field style="font-size: 20px; width: 100%">
+    <input matInput type="email" placeholder="email" [(ngModel)]="email">
+  </mat-form-field>
+
+  <mat-form-field style="font-size: 20px; width: 100%">
+    <input matInput type="password" placeholder="password" [(ngModel)]="password"><br>
+  </mat-form-field>
+
+  <div style="padding: 24px 0 16px">
+    <button mat-raised-button (click)="login()" [mat-dialog-close]="connected_users_list"
+      style="background-color: #880e4f; color: #fff; margin-right: 20px">Login</button>
+    <button mat-raised-button (click)="register()" style="color: #880e4f">Register</button>
+  </div>
+
+</div>

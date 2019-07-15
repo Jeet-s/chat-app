@@ -1,0 +1,36 @@
+<mat-drawer-container class="content" autosize>
+    <mat-drawer #drawer class="sidenav" mode="side" [opened]='sidenav_open'>
+      <input type="text" class="search" placeholder="Search...">
+      <div *ngFor="let user of users" class="side-user" [ngClass]="{'selected': isSelected(user[0])}" (click)="selectUser(user[0])" >
+        <span class="icon">{{user[0].userName[0] | uppercase}}</span>
+        <span class="name">{{user[0].userName}}</span>
+      </div>
+    </mat-drawer>
+  
+      <div class="left-bar">
+          <div class="left-border" *ngIf="!sidenav_open">
+        
+            </div>
+            <div class="toggle-sidenav" (click)="sidenav_open = !sidenav_open" [ngClass]="{'open-btn': sidenav_open}">
+                <mat-icon class="arrow-icon" *ngIf='!sidenav_open'>keyboard_arrow_right</mat-icon>
+                <mat-icon class="arrow-icon" *ngIf='sidenav_open'>keyboard_arrow_left</mat-icon>
+            </div>
+      </div>
+      <div class="top-bar">
+        <span class="ticon">{{selectedUser?.userName[0] | uppercase}}</span>
+        <span class="tname">{{selectedUser?.userName}}</span>
+        <button mat-raised-button class="logout">Log out</button>
+      </div>
+      <div class="messages" #scrollMe [scrollTop]="scrollMe.scrollHeight">
+        <div class="message" *ngFor="let msg of currentMessages" [ngClass]="{'my': msg.from==username}">
+          {{msg.msg}}
+        </div>
+      </div>
+      <div class="msg-bar">
+        <input class="msg-field" #msd_field [(ngModel)]="msg" [ngClass]="{'closed-field': !sidenav_open, 'text-field': msg !== ''}" placeholder="Type a message" type="text" >
+        <div class="send-btn" #send_btn (click)="send(msd_field)" [ngClass]="{'text-field-btn': msg !== '', 'sent': (sent && msg === '')}">
+          <mat-icon class="send-icon">send</mat-icon>
+        </div>
+      </div>
+
+</mat-drawer-container>
