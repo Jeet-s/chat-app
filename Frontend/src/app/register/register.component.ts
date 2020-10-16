@@ -31,14 +31,10 @@ export class RegisterComponent implements OnInit {
     this.appService.api_post('register', requestBody)
       .subscribe(
         (data) => {
-          console.log(data);
           this.registerRef.close();
           this.dialog.open(LoginComponent, {
             width: '600px'
           });
-        },
-        (error) => {
-          console.log(error);
         }
       );
   }

@@ -32,23 +32,18 @@ export class LoginComponent implements OnInit {
     this.appService.api_post('login', requestBody)
       .subscribe(
         (data) => {
-          console.log(data);
-          sessionStorage.setItem('username', data["data"][0].userName.toLowerCase());
-          sessionStorage.setItem('email', data["data"][0].email);
-          sessionStorage.setItem('userid', data["data"][0].userId);
+          sessionStorage.setItem('username', data['userName'].toLowerCase());
+          sessionStorage.setItem('email', data['email']);
+          sessionStorage.setItem('_id', data['_id']);
           
-          this.app.socket = io.connect(this.app.socket_url, { query: "id=0" });
+          this.app.socket = io.connect(this.app.socket_url, { query: `_id=${data['_id']}` });
           this.getUsers().subscribe(
             (users) => {
-              console.log('observer created 3');
               this.appService.connected_users_list = users;
             }
           );
           
           this.loginRef.close();
-        },
-        (error) => {
-          console.log(error);
         }
       );
       
@@ -56,10 +51,8 @@ export class LoginComponent implements OnInit {
 
   getUsers(): Observable<String> {
     return Observable.create((observer) => {
-      console.log('observer created');
       this.app.socket.on('get_connected_users', (users) => {
         observer.next(users);
-        console.log('observer created 2');
       });
     });
   }

@@ -19,11 +19,12 @@
       <div class="top-bar">
         <span class="ticon">{{selectedUser?.userName[0] | uppercase}}</span>
         <span class="tname">{{selectedUser?.userName}}</span>
+        <button mat-raised-button class="location" (click)="shareLocation()">Share location</button>
         <button mat-raised-button class="logout">Log out</button>
       </div>
       <div class="messages" #scrollMe [scrollTop]="scrollMe.scrollHeight">
-        <div class="message" *ngFor="let msg of currentMessages" [ngClass]="{'my': msg.from==username}">
-          {{msg.msg}}
+        <div class="message" [innerHTML]="msg.msg" *ngFor="let msg of currentMessages" [ngClass]="{'my': msg.from==username}">
+          
         </div>
       </div>
       <div class="msg-bar">

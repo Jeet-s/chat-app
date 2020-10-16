@@ -4,7 +4,9 @@
   "description": "backend for chat application",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
   "author": "jagjeet singh",
   "license": "ISC",
@@ -14,5 +16,8 @@
     "express": "^4.17.0",
     "mongoose": "^5.5.11",
     "socket.io": "^2.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.3"
   }
 }

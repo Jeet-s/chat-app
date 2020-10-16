@@ -28,6 +28,7 @@ export class MainComponent implements OnInit {
   currentMessages = [];
   users;
   selectedUser;
+  _id;
 
   constructor(private dialog: MatDialog, private app: AppService,private cd: ChangeDetectorRef) {
 
@@ -37,21 +38,15 @@ export class MainComponent implements OnInit {
         width: '600px'
       });
 
-      dialogRef.afterClosed().subscribe(result => { 
-        // this.app.connected_users_list = (result);
-        // this.users = this.app.connected_users_list;
-        // this.users = this.users.filter(x => x[0].userName != this.username);
-        // this.username = sessionStorage.getItem('username').toLowerCase();
+      dialogRef.afterClosed().subscribe(result => {
 
         this.getUsers().subscribe(
           (users) => {
             this.username = sessionStorage.getItem('username').toLowerCase();
-            console.log('observer created 3', users);
+            this._id = sessionStorage.getItem('_id');
             this.app.connected_users_list = users;
             this.users = this.app.connected_users_list;
-            console.log('x.userName', this.users);
-            console.log('usernameeee', this.username)
-            this.users = this.users.filter(x => x[0].userName.toLowerCase() != this.username);
+            this.users = this.users.filter(x => x[0]._id != this._id);
   
             this.selectedUser = this.users[0][0];
             this.cd.detectChanges();
@@ -59,45 +54,38 @@ export class MainComponent implements OnInit {
         );
         this.getMessages().subscribe(
           (msg) => {
-            if(msg['to'].toLowerCase() === this.username.toLowerCase() || msg['from'].toLowerCase() === this.username.toLowerCase() ){
-              console.log('PUSHED');
+            if(msg['to'] === this._id || msg['from'] === this._id ){
               this.messages.push(msg);
             }
-            console.log('PUSuuuuuuuuHED', this.currentMessages);
-            this.currentMessages = this.messages.filter(x => x['to'].toLowerCase() == this.selectedUser['userName'].toLowerCase() || x['from'].toLowerCase() == this.selectedUser.toLowerCase());
-            console.log('PUSuuu33333333333uuuuuHED', this.currentMessages);
+            this.currentMessages = this.messages.filter(x => x['to'] == this.selectedUser['_id'] || x['from'] == this.selectedUser['_id']);
           }
         );
       });
     } else {
-      console.log('sessionStorage.getItem("userid")', sessionStorage.getItem('userid'));
-      this.app.socket = io.connect(this.app.socket_url, { query: "id=" +  sessionStorage.getItem('userid')});
+      this._id = sessionStorage.getItem('_id');
+      this.app.socket = io.connect(this.app.socket_url, { query: `_id=${this._id}`});
       this.getUsers().subscribe(
         (users) => {
           this.username = sessionStorage.getItem('username').toLowerCase();
-          console.log('observer created 3', users);
           this.app.connected_users_list = users;
           this.users = this.app.connected_users_list;
-          console.log('x.userName', this.users);
-          console.log('usernameeee', this.username)
-          this.users = this.users.filter(x => x[0].userName.toLowerCase() != this.username);
+          this.users = this.users.filter(x => x[0]._id != this._id);
 
-          this.selectedUser = this.users[0][0];
+          if (this.users.length > 0)
+            this.selectedUser = this.users[0][0];
           this.cd.detectChanges();
         }
       );
       this.getMessages().subscribe(
         
         (msg) => {
-          if(msg['to'].toLowerCase() === this.username.toLowerCase() || msg['from'].toLowerCase() === this.username.toLowerCase() ){
-            console.log('PUSHED');
+          if(msg['to'] === this._id || msg['from'] === this._id ){
             this.messages.push(msg);
           }
-          this.currentMessages = this.messages.filter(x => x['to'].toLowerCase() == this.selectedUser['userName'].toLowerCase() || x['from'].toLowerCase() == this.selectedUser['userName'].toLowerCase());
+          this.currentMessages = this.messages.filter(x => x['to'] == this.selectedUser['_id'] || x['from'] == this.selectedUser['_id']);
 
         }
       );
-      console.log('SUBSCRIBED');
     }
 
    
@@ -157,6 +145,23 @@ export class MainComponent implements OnInit {
     }
     
     return false;
+  }
+
+  shareLocation(){
+    if (!navigator.geolocation){
+      return alert('Your browser does not support geolocation');
+    }
+    console.log()
+    let obj = {
+      msg: null,
+      from: sessionStorage.getItem('username').toLowerCase(),
+      to: this.selectedUser.userName
+    }
+
+    navigator.geolocation.getCurrentPosition((position) => {
+      obj.msg = `<a href="http://google.com/maps/?q=${position.coords.latitude},${position.coords.longitude}" about="_blank">http://google.com/maps/?q=${position.coords.latitude},${position.coords.longitude}</a>`
+      this.app.socket.emit('message', obj);
+    });
   }
 
 }
